@@ -12,3 +12,6 @@ restart:
 
 exec:
 	docker compose up -d && docker exec -it events-hub-bot-php-1 bash
+
+ngrok:
+	ngrok http 80
