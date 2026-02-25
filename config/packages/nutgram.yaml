@@ -1,0 +1,4 @@
+nutgram:
+    token: '%env(string:BOT_TOKEN)%'
+    routes: true
+    config: []

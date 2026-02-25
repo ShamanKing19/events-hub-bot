@@ -9,3 +9,7 @@ services:
     App\:
         resource: '../src/'
 
+    App\Telegram\:
+        public: true
+        shared: false
+        resource: '../src/Telegram'
