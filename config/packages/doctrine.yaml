@@ -1,6 +1,6 @@
 doctrine:
     dbal:
-        server_version: 'mariadb:11'
+        server_version: 'mariadb-11.8.6'
         host: '%env(DB_HOST)%'
         port: '%env(DB_PORT)%'
         dbname: '%env(DB_DATABASE)%'
