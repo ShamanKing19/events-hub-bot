@@ -1,2 +1,9 @@
-.docker/mariadb
+.idea
 .env
+
+# Docker
+.docker/mariadb
+
+# Symfony
+/var
+/vendor
