@@ -2,6 +2,7 @@ monolog:
     channels:
         - webhook
         - deprecation
+        - nutgram
 
     handlers:
         main:
@@ -13,7 +14,7 @@ monolog:
             buffer_size: 50
         nested:
             type: stream
-            path: php://stderr
+            path: '%kernel.logs_dir%/error.log'
             level: debug
             formatter: monolog.formatter.json
         console:
@@ -30,3 +31,8 @@ monolog:
             channels: [webhook]
             path: '%kernel.logs_dir%/webhook.log'
             formatter: monolog.formatter.json
+        nutgram:
+            type: stream
+            channels: [nutgram]
+            path: '%kernel.logs_dir%/nutgram.log'
+#            formatter: monolog.formatter.json
