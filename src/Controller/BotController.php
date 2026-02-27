@@ -16,7 +16,7 @@ final class BotController extends AbstractController
     {
     }
 
-    #[Route('/api/v1/bot/webhook', name: 'app_bot')]
+    #[Route('/api/v1/bot/webhook', name: 'bot_webhook')]
     public function webhook(Nutgram $bot, Request $request): JsonResponse
     {
         $this->logger->info('webhook', $request->toArray());
