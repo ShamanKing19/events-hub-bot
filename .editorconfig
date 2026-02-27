@@ -1,0 +1,18 @@
+# editorconfig.org
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[*.php]
+ij_php_align_key_value_pairs = false
+ij_php_align_phpdoc_param_names = false
+ij_php_phpdoc_blank_lines_around_parameters = false
+ij_php_force_short_declaration_array_style = true
+ij_php_align_match_arm_bodies = false
