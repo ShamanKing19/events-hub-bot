@@ -76,7 +76,7 @@ class AddStudentConversation extends Conversation
             $bot->sendMessage('❌ Добавление отменено.', reply_markup: $this->mainMenuKeyboard());
         }
 
-        $bot->setUserData('current_menu', MainMenu::ID);
+        $this->botService->setCurrentMenu($bot, MainMenu::ID);
         $this->end();
     }
 

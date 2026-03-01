@@ -105,7 +105,7 @@ class EditStudentConversation extends Conversation
             $bot->sendMessage('❌ Изменение отменено.', reply_markup: $this->mainMenuKeyboard());
         }
 
-        $bot->setUserData('current_menu', MainMenu::ID);
+        $this->botService->setCurrentMenu($bot, MainMenu::ID);
         $this->end();
     }
 

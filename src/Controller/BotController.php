@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Telegram\BotService;
 use App\Telegram\Conversation\AddStudentConversation;
 use App\Telegram\Conversation\EditStudentConversation;
 use App\Telegram\Menu\MainMenu;
@@ -19,6 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 final class BotController extends AbstractController
 {
     public function __construct(
+        private readonly BotService                                       $botService,
         #[Target(name: 'monolog.logger.webhook')] private LoggerInterface $logger
     ) {
     }
@@ -62,22 +64,22 @@ final class BotController extends AbstractController
         // ========================
 
         $bot->onText(StudentsMenu::LABEL_ADD, function (Nutgram $bot) {
-            $currentMenu = $bot->getUserData('current_menu', default: MainMenu::ID);
-            if ($currentMenu !== StudentsMenu::ID) {
-                return;
+            if ($this->botService->getCurrentMenu($bot) === StudentsMenu::ID) {
+                AddStudentConversation::begin($bot);
             }
-
-            AddStudentConversation::begin($bot);
         });
 
         $bot->onText(StudentsMenu::LABEL_EDIT, function (Nutgram $bot) {
-            $currentMenu = $bot->getUserData('current_menu', default: MainMenu::ID);
-            if ($currentMenu !== StudentsMenu::ID) {
-                return;
+            if ($this->botService->getCurrentMenu($bot) === StudentsMenu::ID) {
+                EditStudentConversation::begin($bot);
             }
-
-            EditStudentConversation::begin($bot);
         });
+
+//        $bot->onText(StudentsMenu::LABEL_DELETE, function (Nutgram $bot) {
+//            if ($this->botService->getCurrentMenu($bot) === StudentsMenu::ID) {
+//                EditStudentConversation::begin($bot);
+//            }
+//        });
 
         $bot->run();
 
@@ -86,7 +88,7 @@ final class BotController extends AbstractController
 
     private function sendMenu(Nutgram $bot, string $menu, string $text): void
     {
-        $bot->setUserData('current_menu', $menu);
+        $this->botService->setCurrentMenu($bot, $menu);
         $bot->sendMessage($text, reply_markup: $this->buildKeyboard($menu));
     }
 
