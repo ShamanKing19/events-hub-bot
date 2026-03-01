@@ -11,6 +11,7 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\KeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\ReplyKeyboardMarkup;
+use SergiX44\Nutgram\Telegram\Types\Keyboard\ReplyKeyboardRemove;
 
 class EditStudentConversation extends Conversation
 {
@@ -36,7 +37,7 @@ class EditStudentConversation extends Conversation
     public function start(Nutgram $bot): void
     {
         // 1. Удаляем клавиатуру
-        $bot->sendMessage('...', reply_markup: ReplyKeyboardMarkup::make(true))?->delete();
+        $bot->sendMessage('...', reply_markup: ReplyKeyboardRemove::make(true))?->delete();
 
         // 2. Выводим список студентов
         $keyboard = InlineKeyboardMarkup::make();
