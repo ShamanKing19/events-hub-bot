@@ -47,7 +47,7 @@ class RemoveStudentConversation extends Conversation
             reply_markup: $keyboard
         );
 
-        $this->next('handleChosenStudent');
+        $this->next('confirm');
     }
 
     public function confirm(Nutgram $bot): void
