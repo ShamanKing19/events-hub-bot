@@ -115,7 +115,7 @@ final class BotController extends AbstractController
 
     private function sendStudentList(Nutgram $bot, int $rowsPerMessage = 20): void
     {
-        $students = $this->studentService->findEditable();
+        $students = $this->studentService->findForChoice();
         $number = 1;
 
         foreach (array_chunk($students, $rowsPerMessage) as $chunk) {

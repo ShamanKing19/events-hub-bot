@@ -32,9 +32,12 @@ readonly class StudentService
     /**
      * @return array<StudentDto>
      */
-    public function findEditable(): array
+    public function findForChoice(): array
     {
-        return array_map(static fn(Student $student) => self::entityToDto($student), $this->studentRepository->findAll());
+        return array_map(
+            static fn(Student $student) => self::entityToDto($student),
+            $this->studentRepository->findForChoice()
+        );
     }
 
     public function exists(int $id): bool

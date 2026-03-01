@@ -40,7 +40,7 @@ class EditStudentConversation extends Conversation
         $this->botService->removeKeyboard($bot);
 
         $keyboard = InlineKeyboardMarkup::make();
-        $students = $this->studentService->findEditable();
+        $students = $this->studentService->findForChoice();
         foreach ($students as $student) {
             $keyboard->addRow(InlineKeyboardButton::make(text: $student->name, callback_data: $student->id));
         }

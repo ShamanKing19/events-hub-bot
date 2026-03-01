@@ -56,4 +56,15 @@ class StudentRepository extends ServiceEntityRepository
             $em->flush();
         }
     }
+
+    /**
+     * @return array<Student>
+     */
+    public function findForChoice(): array
+    {
+        return $this->createQueryBuilder('student')
+            ->orderBy('student.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }
