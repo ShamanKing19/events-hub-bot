@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Telegram\BotService;
 use App\Telegram\Conversation\AddStudentConversation;
 use App\Telegram\Conversation\EditStudentConversation;
+use App\Telegram\Conversation\RemoveStudentConversation;
 use App\Telegram\Menu\MainMenu;
 use App\Telegram\Menu\StudentsMenu;
 use Psr\Log\LoggerInterface;
@@ -75,11 +76,11 @@ final class BotController extends AbstractController
             }
         });
 
-//        $bot->onText(StudentsMenu::LABEL_DELETE, function (Nutgram $bot) {
-//            if ($this->botService->getCurrentMenu($bot) === StudentsMenu::ID) {
-//                EditStudentConversation::begin($bot);
-//            }
-//        });
+        $bot->onText(StudentsMenu::LABEL_DELETE, function (Nutgram $bot) {
+            if ($this->botService->getCurrentMenu($bot) === StudentsMenu::ID) {
+                RemoveStudentConversation::begin($bot);
+            }
+        });
 
         $bot->run();
 

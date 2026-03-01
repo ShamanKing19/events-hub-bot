@@ -47,4 +47,13 @@ class StudentRepository extends ServiceEntityRepository
 
         return $student;
     }
+
+    public function remove(int $id): void
+    {
+        if ($student = $this->find($id)) {
+            $em = $this->getEntityManager();
+            $em->remove($student);
+            $em->flush();
+        }
+    }
 }

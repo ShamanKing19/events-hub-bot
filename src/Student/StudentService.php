@@ -41,4 +41,16 @@ readonly class StudentService
     {
         return $this->studentRepository->find($id) !== null;
     }
+
+    public function find(int $id): StudentDto
+    {
+        $student = $this->studentRepository->find($id);
+
+        return new StudentDto(id: $student->getId(), name: $student->getName());
+    }
+
+    public function remove(int $id): void
+    {
+        $this->studentRepository->remove($id);
+    }
 }
