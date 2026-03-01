@@ -56,10 +56,16 @@ class EditStudentConversation extends Conversation
 
     public function handleChosenStudent(Nutgram $bot): void
     {
-        $id = $bot->callbackQuery()->data;
+        $id = null;
+        if ($callback = $bot->callbackQuery()) {
+            $id = $callback->data;
+        }
+
+
         if (!is_numeric($id) || !$this->studentService->exists((int)$id)) {
             $bot->sendMessage('Выберите студента из списка');
-            $this->next(__METHOD__);
+            $this->next(__FUNCTION__);
+            return;
         }
 
         $this->id = (int)$id;
