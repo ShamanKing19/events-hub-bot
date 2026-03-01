@@ -35,17 +35,17 @@ class RemoveStudentConversation extends Conversation
     public function start(Nutgram $bot): void
     {
         $this->botService->removeKeyboard($bot);
+        foreach (array_chunk($this->studentService->findForChoice(), 100) as $chunk) {
+            $keyboard = InlineKeyboardMarkup::make();
+            foreach ($chunk as $student) {
+                $keyboard->addRow(InlineKeyboardButton::make(text: $student->name, callback_data: $student->id));
+            }
 
-        $keyboard = InlineKeyboardMarkup::make();
-        $students = $this->studentService->findForChoice();
-        foreach ($students as $student) {
-            $keyboard->addRow(InlineKeyboardButton::make(text: $student->name, callback_data: $student->id));
+            $bot->sendMessage(
+                '👤 Выберите студента, которого необходимо удалить',
+                reply_markup: $keyboard
+            );
         }
-
-        $bot->sendMessage(
-            '👤 Выберите студента, которого необходимо удалить',
-            reply_markup: $keyboard
-        );
 
         $this->next('confirm');
     }

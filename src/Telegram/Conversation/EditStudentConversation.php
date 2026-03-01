@@ -39,16 +39,17 @@ class EditStudentConversation extends Conversation
     {
         $this->botService->removeKeyboard($bot);
 
-        $keyboard = InlineKeyboardMarkup::make();
-        $students = $this->studentService->findForChoice();
-        foreach ($students as $student) {
-            $keyboard->addRow(InlineKeyboardButton::make(text: $student->name, callback_data: $student->id));
-        }
+        foreach (array_chunk($this->studentService->findForChoice(), 100) as $chunk) {
+            $keyboard = InlineKeyboardMarkup::make();
+            foreach ($chunk as $student) {
+                $keyboard->addRow(InlineKeyboardButton::make(text: $student->name, callback_data: $student->id));
+            }
 
-        $bot->sendMessage(
-            '👤 Выберите студента, данные которого нужно изменить',
-            reply_markup: $keyboard
-        );
+            $bot->sendMessage(
+                '👤 Выберите студента, данные которого нужно изменить',
+                reply_markup: $keyboard
+            );
+        }
 
         $this->next('handleChosenStudent');
     }
