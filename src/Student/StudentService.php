@@ -30,11 +30,11 @@ readonly class StudentService
     }
 
     /**
-     * @return array<Student>
+     * @return array<StudentDto>
      */
     public function findEditable(): array
     {
-        return $this->studentRepository->findAll();
+        return array_map(static fn(Student $student) => self::entityToDto($student), $this->studentRepository->findAll());
     }
 
     public function exists(int $id): bool
@@ -42,15 +42,25 @@ readonly class StudentService
         return $this->studentRepository->find($id) !== null;
     }
 
-    public function find(int $id): StudentDto
+    public function find(int $id): ?StudentDto
     {
-        $student = $this->studentRepository->find($id);
+        if ($student = $this->studentRepository->find($id)) {
+            return self::entityToDto($student);
+        }
 
-        return new StudentDto(id: $student->getId(), name: $student->getName());
+        return null;
     }
 
     public function remove(int $id): void
     {
         $this->studentRepository->remove($id);
+    }
+
+    private static function entityToDto(Student $student): StudentDto
+    {
+        return new StudentDto(
+            id: $student->getId(),
+            name: $student->getName()
+        );
     }
 }

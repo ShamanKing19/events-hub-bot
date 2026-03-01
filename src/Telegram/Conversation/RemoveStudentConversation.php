@@ -39,7 +39,7 @@ class RemoveStudentConversation extends Conversation
         $keyboard = InlineKeyboardMarkup::make();
         $students = $this->studentService->findEditable();
         foreach ($students as $student) {
-            $keyboard->addRow(InlineKeyboardButton::make(text: $student->getName(), callback_data: $student->getId()));
+            $keyboard->addRow(InlineKeyboardButton::make(text: $student->name, callback_data: $student->id));
         }
 
         $bot->sendMessage(
@@ -61,6 +61,12 @@ class RemoveStudentConversation extends Conversation
 
         $this->id = (int)$id;
         $student = $this->studentService->find($this->id);
+        if ($student === null) {
+            $bot->sendMessage('Студент не найден. Выберите студента из списка.');
+            $this->start($bot);
+            return;
+        }
+
         $bot->sendMessage(
             "Вы собираетесь удалить студента \"$student->name\"",
             reply_markup: ReplyKeyboardMarkup::make(resize_keyboard: true)

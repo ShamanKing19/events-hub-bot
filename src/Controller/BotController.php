@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Student\StudentService;
 use App\Telegram\BotService;
 use App\Telegram\Conversation\AddStudentConversation;
 use App\Telegram\Conversation\EditStudentConversation;
@@ -21,8 +22,10 @@ use Symfony\Component\Routing\Attribute\Route;
 final class BotController extends AbstractController
 {
     public function __construct(
-        private readonly BotService                                       $botService,
-        #[Target(name: 'monolog.logger.webhook')] private LoggerInterface $logger
+        #[Target(name: 'monolog.logger.webhook')]
+        private LoggerInterface         $logger,
+        private readonly BotService     $botService,
+        private readonly StudentService $studentService
     ) {
     }
 
@@ -64,6 +67,12 @@ final class BotController extends AbstractController
         //   СТУДЕНТЫ — ДЕЙСТВИЯ
         // ========================
 
+        $bot->onText(StudentsMenu::LABEL_LIST, function (Nutgram $bot) {
+            if ($this->botService->getCurrentMenu($bot) === StudentsMenu::ID) {
+                $this->sendStudentList($bot);
+            }
+        });
+
         $bot->onText(StudentsMenu::LABEL_ADD, function (Nutgram $bot) {
             if ($this->botService->getCurrentMenu($bot) === StudentsMenu::ID) {
                 AddStudentConversation::begin($bot);
@@ -102,5 +111,19 @@ final class BotController extends AbstractController
             StudentsMenu::ID => StudentsMenu::make(),
             default => MainMenu::make(),
         };
+    }
+
+    private function sendStudentList(Nutgram $bot, int $rowsPerMessage = 20): void
+    {
+        $students = $this->studentService->findEditable();
+        $number = 1;
+
+        foreach (array_chunk($students, $rowsPerMessage) as $chunk) {
+            $message = '';
+            foreach ($chunk as $student) {
+                $message .= $number++ . ". $student->name" . PHP_EOL;
+            }
+            $bot->sendMessage($message);
+        }
     }
 }
