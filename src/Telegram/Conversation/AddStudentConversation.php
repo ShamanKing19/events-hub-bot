@@ -2,7 +2,7 @@
 
 namespace App\Telegram\Conversation;
 
-use App\Student\Dto\CreateStudentDto;
+use App\Student\Dto\StudentDto;
 use App\Student\StudentService;
 use App\Telegram\Menu\MainMenu;
 use SergiX44\Nutgram\Conversations\Conversation;
@@ -61,7 +61,7 @@ class AddStudentConversation extends Conversation
         $text = $bot->message()->text;
 
         if ($text === self::BUTTON_CONFIRM) {
-            $dto = new CreateStudentDto(name: $this->name);
+            $dto = new StudentDto(name: $this->name);
             $this->studentService->create($dto);
 
             $bot->sendMessage(

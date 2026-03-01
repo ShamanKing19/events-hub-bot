@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Student;
-use App\Student\Dto\CreateStudentDto;
+use App\Student\Dto\StudentDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,7 +17,27 @@ class StudentRepository extends ServiceEntityRepository
         parent::__construct($registry, Student::class);
     }
 
-    public function create(CreateStudentDto $dto): Student
+    public function update(StudentDto $dto): Student
+    {
+        if (empty($dto->id)) {
+            throw new \RuntimeException('Не указан id');
+        }
+
+        $student = $this->find($dto->id);
+        if ($student === null) {
+            throw new \RuntimeException("Студент с id $dto->id не найден");
+        }
+
+        if (isset($dto->name)) {
+            $student->setName($dto->name);
+        }
+
+        $this->getEntityManager()->flush();
+
+        return $student;
+    }
+
+    public function create(StudentDto $dto): Student
     {
         $student = new Student();
         $student->setName($dto->name);

@@ -1,8 +1,10 @@
 monolog:
     channels:
-        - webhook
         - deprecation
         - nutgram
+        - webhook
+        - students
+        - events
 
     handlers:
         main:
@@ -31,8 +33,17 @@ monolog:
             channels: [webhook]
             path: '%kernel.logs_dir%/webhook.log'
             formatter: monolog.formatter.json
-        nutgram:
+        app:
             type: stream
-            channels: [nutgram]
-            path: '%kernel.logs_dir%/nutgram.log'
-#            formatter: monolog.formatter.json
+            level: info
+            channels: [students, events]
+            path: '%kernel.logs_dir%/app.log'
+            formatter: monolog.formatter.json
+
+when@dev:
+    monolog:
+        handlers:
+            nutgram:
+                type: stream
+                channels: [nutgram]
+                path: '%kernel.logs_dir%/nutgram.log'

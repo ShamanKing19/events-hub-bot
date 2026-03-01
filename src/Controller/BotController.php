@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Telegram\Conversation\AddStudentConversation;
+use App\Telegram\Conversation\EditStudentConversation;
 use App\Telegram\Menu\MainMenu;
 use App\Telegram\Menu\StudentsMenu;
 use Psr\Log\LoggerInterface;
@@ -67,6 +68,15 @@ final class BotController extends AbstractController
             }
 
             AddStudentConversation::begin($bot);
+        });
+
+        $bot->onText(StudentsMenu::LABEL_EDIT, function (Nutgram $bot) {
+            $currentMenu = $bot->getUserData('current_menu', default: MainMenu::ID);
+            if ($currentMenu !== StudentsMenu::ID) {
+                return;
+            }
+
+            EditStudentConversation::begin($bot);
         });
 
         $bot->run();
