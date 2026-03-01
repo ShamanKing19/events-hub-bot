@@ -32,6 +32,7 @@ class StudentRepository extends ServiceEntityRepository
             $student->setName($dto->name);
         }
 
+        $student->setUpdatedAt(new \DateTimeImmutable());
         $this->getEntityManager()->flush();
 
         return $student;

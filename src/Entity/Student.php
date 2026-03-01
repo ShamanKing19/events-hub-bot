@@ -26,9 +26,17 @@ class Student
     #[ORM\OneToMany(targetEntity: StudentEvent::class, mappedBy: 'student')]
     private Collection $studentEvents;
 
+    #[ORM\Column(nullable: true, columnDefinition: 'DATETIME DEFAULT CURRENT_TIMESTAMP')]
+    private ?\DateTimeImmutable $updatedAt;
+
+    #[ORM\Column(nullable: true, columnDefinition: 'DATETIME DEFAULT CURRENT_TIMESTAMP')]
+    private ?\DateTimeImmutable $createdAt;
+
     public function __construct()
     {
         $this->studentEvents = new ArrayCollection();
+        $this->updatedAt = new \DateTimeImmutable();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -73,6 +81,30 @@ class Student
                 $studentEvent->setStudent(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
