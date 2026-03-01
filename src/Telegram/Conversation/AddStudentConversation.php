@@ -4,6 +4,7 @@ namespace App\Telegram\Conversation;
 
 use App\Student\Dto\StudentDto;
 use App\Student\StudentService;
+use App\Telegram\BotService;
 use App\Telegram\Menu\MainMenu;
 use SergiX44\Nutgram\Conversations\Conversation;
 use SergiX44\Nutgram\Nutgram;
@@ -18,8 +19,10 @@ class AddStudentConversation extends Conversation
     private const string BUTTON_CONFIRM = '✅ Подтвердить';
     private const string BUTTON_DECLINE = '❌ Отмена';
 
-    public function __construct(private readonly StudentService $studentService)
-    {
+    public function __construct(
+        private readonly BotService     $botService,
+        private readonly StudentService $studentService
+    ) {
     }
 
     protected function getSerializableAttributes(): array
@@ -31,6 +34,7 @@ class AddStudentConversation extends Conversation
 
     public function start(Nutgram $bot): void
     {
+        $this->botService->removeKeyboard($bot);
         $bot->sendMessage(
             '👤 Добавление студента' . PHP_EOL . 'Введите ФИО студента:',
             reply_markup: ReplyKeyboardRemove::make(true),
@@ -72,7 +76,7 @@ class AddStudentConversation extends Conversation
             $bot->sendMessage('❌ Добавление отменено.', reply_markup: $this->mainMenuKeyboard());
         }
 
-        $bot->setUserData('current_menu', 'main');
+        $bot->setUserData('current_menu', MainMenu::ID);
         $this->end();
     }
 

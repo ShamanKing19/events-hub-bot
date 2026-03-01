@@ -4,6 +4,7 @@ namespace App\Telegram\Conversation;
 
 use App\Student\Dto\StudentDto;
 use App\Student\StudentService;
+use App\Telegram\BotService;
 use App\Telegram\Menu\MainMenu;
 use SergiX44\Nutgram\Conversations\Conversation;
 use SergiX44\Nutgram\Nutgram;
@@ -11,7 +12,6 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\InlineKeyboardMarkup;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\KeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\ReplyKeyboardMarkup;
-use SergiX44\Nutgram\Telegram\Types\Keyboard\ReplyKeyboardRemove;
 
 class EditStudentConversation extends Conversation
 {
@@ -22,6 +22,7 @@ class EditStudentConversation extends Conversation
     private const string BUTTON_DECLINE = '❌ Отмена';
 
     public function __construct(
+        private readonly BotService $botService,
         private readonly StudentService $studentService,
     ) {
     }
@@ -36,10 +37,8 @@ class EditStudentConversation extends Conversation
 
     public function start(Nutgram $bot): void
     {
-        // 1. Удаляем клавиатуру
-        $bot->sendMessage('...', reply_markup: ReplyKeyboardRemove::make(true))?->delete();
+        $this->botService->removeKeyboard($bot);
 
-        // 2. Выводим список студентов
         $keyboard = InlineKeyboardMarkup::make();
         $students = $this->studentService->findEditable();
         foreach ($students as $student) {
