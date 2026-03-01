@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StudentRepository::class)]
 #[ORM\Table(name: 'students')]
+#[ORM\Index(columns: ['name'])]
 class Student
 {
     #[ORM\Id]
