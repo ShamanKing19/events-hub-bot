@@ -2,7 +2,7 @@
 
 namespace App\Student\Dto;
 
-readonly class StudentDto
+final readonly class StudentDto
 {
     public function __construct(
         public ?int $id = null,
