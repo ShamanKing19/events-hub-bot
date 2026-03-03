@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Student\StudentService;
 use App\Telegram\BotService;
-use App\Telegram\Conversation\Student\AddEventConversation;
+use App\Telegram\Conversation\Event\AddEventConversation;
 use App\Telegram\Conversation\Student\AddStudentConversation;
 use App\Telegram\Conversation\Student\EditStudentConversation;
 use App\Telegram\Conversation\Student\RemoveStudentConversation;
