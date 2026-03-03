@@ -76,10 +76,10 @@ class RemoveStudentConversation extends Conversation
                 ),
         );
 
-        $this->next('save');
+        $this->next('remove');
     }
 
-    public function save(Nutgram $bot): void
+    public function remove(Nutgram $bot): void
     {
         if ($bot->message()->text === self::BUTTON_CONFIRM) {
             $this->studentService->remove($this->id);
