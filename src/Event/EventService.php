@@ -56,6 +56,7 @@ readonly class EventService
     public function remove(int $id): void
     {
         $this->eventRepository->remove($id);
+        $this->logger->info('Мероприятие удалено', ['fields' => $id]);
     }
 
     private static function entityToDto(Event $event): EventDto

@@ -26,6 +26,7 @@ readonly class StudentService
     public function create(StudentDto $dto): void
     {
         $this->studentRepository->create($dto);
+        $this->logger->info('Студент создан', ['fields' => $dto]);
     }
 
     /**
@@ -56,6 +57,7 @@ readonly class StudentService
     public function remove(int $id): void
     {
         $this->studentRepository->remove($id);
+        $this->logger->info('Студент удалён', ['id' => $id]);
     }
 
     private static function entityToDto(Student $student): StudentDto
