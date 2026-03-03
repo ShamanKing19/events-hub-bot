@@ -40,11 +40,11 @@ final class BotController extends AbstractController
         // ========================
 
         $bot->onCommand('start', function (Nutgram $bot) {
-            $this->sendMenu($bot, MainMenu::ID, 'Добро пожаловать! Выберите раздел:');
+            $this->sendMenu($bot, MainMenu::ID, 'Добро пожаловать!');
         })->description('Главное меню');
 
         $bot->onCommand('menu', function (Nutgram $bot) {
-            $this->sendMenu($bot, MainMenu::ID, 'Главное меню:');
+            $this->sendMenu($bot, MainMenu::ID, 'Главное меню');
         })->description('Вернуться в главное меню');
 
         // ========================
@@ -52,7 +52,7 @@ final class BotController extends AbstractController
         // ========================
 
         $bot->onText(MainMenu::BACK, function (Nutgram $bot) {
-            $this->sendMenu($bot, MainMenu::ID, 'Главное меню:');
+            $this->sendMenu($bot, MainMenu::ID, 'Главное меню');
         });
 
         // ========================
@@ -60,7 +60,7 @@ final class BotController extends AbstractController
         // ========================
 
         $bot->onText(MainMenu::STUDENTS, function (Nutgram $bot) {
-            $this->sendMenu($bot, StudentsMenu::ID, '👤 Студенты:');
+            $this->sendMenu($bot, StudentsMenu::ID, '👤 Студенты');
         });
 
         // ========================

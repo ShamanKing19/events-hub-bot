@@ -36,7 +36,7 @@ class AddStudentConversation extends Conversation
     {
         $this->botService->removeKeyboard($bot);
         $bot->sendMessage(
-            '👤 Добавление студента' . PHP_EOL . 'Введите ФИО студента:',
+            '👤 Добавление студента' . PHP_EOL . 'Введите ФИО студента',
             reply_markup: ReplyKeyboardRemove::make(true),
         );
 
