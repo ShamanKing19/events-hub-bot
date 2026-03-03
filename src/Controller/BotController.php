@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Student\StudentService;
 use App\Telegram\BotService;
+use App\Telegram\Conversation\Student\AddEventConversation;
 use App\Telegram\Conversation\Student\AddStudentConversation;
 use App\Telegram\Conversation\Student\EditStudentConversation;
 use App\Telegram\Conversation\Student\RemoveStudentConversation;
@@ -63,6 +64,9 @@ final class BotController extends AbstractController
         $bot->onText(MainMenu::STUDENTS, function (Nutgram $bot) {
             $this->sendMenu($bot, StudentsMenu::ID, '👤 Студенты');
         });
+        $bot->onText(MainMenu::EVENTS, function (Nutgram $bot) {
+            $this->sendMenu($bot, EventsMenu::ID, '📅 Мероприятия');
+        });
 
         // ========================
         //   СТУДЕНТЫ — ДЕЙСТВИЯ
@@ -92,6 +96,34 @@ final class BotController extends AbstractController
             }
         });
 
+        // ========================
+        //   МЕРОПРИЯТИЯ — ДЕЙСТВИЯ
+        // ========================
+
+//        $bot->onText(EventsMenu::LABEL_LIST, function (Nutgram $bot) {
+//            if ($this->botService->getCurrentMenu($bot) === EventsMenu::ID) {
+//                $this->sendEventsList($bot);
+//            }
+//        });
+
+        $bot->onText(EventsMenu::LABEL_ADD, function (Nutgram $bot) {
+            if ($this->botService->getCurrentMenu($bot) === EventsMenu::ID) {
+                AddEventConversation::begin($bot);
+            }
+        });
+
+//        $bot->onText(EventsMenu::LABEL_EDIT, function (Nutgram $bot) {
+//            if ($this->botService->getCurrentMenu($bot) === EventsMenu::ID) {
+//                EditEventConversation::begin($bot);
+//            }
+//        });
+//
+//        $bot->onText(EventsMenu::LABEL_DELETE, function (Nutgram $bot) {
+//            if ($this->botService->getCurrentMenu($bot) === EventsMenu::ID) {
+//                RemoveEventConversation::begin($bot);
+//            }
+//        });
+
         $bot->run();
 
         return $this->json([]);
@@ -110,6 +142,7 @@ final class BotController extends AbstractController
     {
         return match ($menu) {
             StudentsMenu::ID => StudentsMenu::make(),
+            EventsMenu::ID => EventsMenu::make(),
             default => MainMenu::make(),
         };
     }
