@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Telegram\Conversation\Student;
+namespace App\Telegram\Conversation\Event;
 
 use App\Event\EventService;
 use App\Student\Dto\EventDto;
