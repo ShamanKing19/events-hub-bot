@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace App\Student;
 
 use App\Entity\Student;
 use App\Student\Dto\StudentDto;
