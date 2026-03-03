@@ -5,7 +5,7 @@ namespace App\Telegram\Menu;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\KeyboardButton;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\ReplyKeyboardMarkup;
 
-class StudentsMenu
+readonly class StudentsMenu
 {
     public const string ID = 'students';
     public const string LABEL_ADD = '➕ Добавить';

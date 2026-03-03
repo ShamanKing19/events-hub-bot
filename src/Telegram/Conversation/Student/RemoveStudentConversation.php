@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Telegram\Conversation;
+namespace App\Telegram\Conversation\Student;
 
 use App\Student\StudentService;
 use App\Telegram\BotService;
