@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Event\EventService;
+use App\Student\Dto\EventDto;
 use App\Student\StudentService;
 use App\Telegram\BotService;
 use App\Telegram\Conversation\Event\AddEventConversation;
@@ -27,9 +29,10 @@ final class BotController extends AbstractController
 {
     public function __construct(
         #[Target(name: 'monolog.logger.webhook')]
-        private LoggerInterface         $logger,
-        private readonly BotService     $botService,
-        private readonly StudentService $studentService
+        private readonly LoggerInterface $logger,
+        private readonly BotService      $botService,
+        private readonly StudentService  $studentService,
+        private readonly EventService    $eventService
     ) {
     }
 

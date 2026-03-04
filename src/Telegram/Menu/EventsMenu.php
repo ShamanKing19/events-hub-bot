@@ -8,10 +8,10 @@ use SergiX44\Nutgram\Telegram\Types\Keyboard\ReplyKeyboardMarkup;
 readonly class EventsMenu
 {
     public const string ID = 'events';
-    public const string LABEL_ADD = '➕ Добавить';
-    public const string LABEL_EDIT = '✏️ Редактировать';
-    public const string LABEL_DELETE = '🗑 Удалить';
-    public const string LABEL_LIST = '☰ Список';
+    public const string LABEL_ADD = '➕ Добавить мероприятие';
+    public const string LABEL_EDIT = '✏️ Редактировать мероприятие';
+    public const string LABEL_DELETE = '🗑 Удалить мероприятие';
+    public const string LABEL_LIST = '☰ Список мероприятий';
     public const string LABEL_BACK = '⬅️ Назад';
 
     public static function make(): ReplyKeyboardMarkup
