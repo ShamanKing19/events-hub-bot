@@ -105,11 +105,11 @@ final class BotController extends AbstractController
         //   МЕРОПРИЯТИЯ — ДЕЙСТВИЯ
         // ========================
 
-//        $bot->onText(EventsMenu::LABEL_LIST, function (Nutgram $bot) {
-//            if ($this->botService->getCurrentMenu($bot) === EventsMenu::ID) {
-//                $this->sendEventsList($bot);
-//            }
-//        });
+        $bot->onText(EventsMenu::LABEL_LIST, function (Nutgram $bot) {
+            if ($this->botService->getCurrentMenu($bot) === EventsMenu::ID) {
+                $this->sendEventList($bot);
+            }
+        });
 
         $bot->onText(EventsMenu::LABEL_ADD, function (Nutgram $bot) {
             if ($this->botService->getCurrentMenu($bot) === EventsMenu::ID) {
@@ -150,6 +150,21 @@ final class BotController extends AbstractController
             EventsMenu::ID => EventsMenu::make(),
             default => MainMenu::make(),
         };
+    }
+
+    private function sendEventList(Nutgram $bot, int $rowsPerMessage = 20): void
+    {
+        $events = $this->eventService->findForChoice();
+        $number = 1;
+
+        foreach (array_chunk($events, $rowsPerMessage) as $chunk) {
+            $message = '';
+            /** @var EventDto $event */
+            foreach ($chunk as $event) {
+                $message .= $number++ . ". $event->name (с " . $event->startDate->format('d.m.Y H:i:s') . ' по ' . $event->finishDate->format('d.m.Y H:i:s') . ')' . PHP_EOL;
+            }
+            $bot->sendMessage($message);
+        }
     }
 
     private function sendStudentList(Nutgram $bot, int $rowsPerMessage = 20): void
