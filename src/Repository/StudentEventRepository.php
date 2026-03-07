@@ -45,4 +45,19 @@ class StudentEventRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return array<StudentEvent>
+     */
+    public function findByEvent(int $eventId): array
+    {
+        return $this->createQueryBuilder('studentEvent')
+            ->leftJoin('studentEvent.student', 'student')
+            ->addSelect('student')
+            ->where('studentEvent.event = :eventId')
+            ->setParameter('eventId', $eventId)
+            ->orderBy('student.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

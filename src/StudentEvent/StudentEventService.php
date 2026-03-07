@@ -30,4 +30,12 @@ readonly class StudentEventService
     {
         return $this->studentEventRepository->findByStudent($studentId);
     }
+
+    /**
+     * @return array<StudentEvent>
+     */
+    public function findByEvent(int $eventId): array
+    {
+        return $this->studentEventRepository->findByEvent($eventId);
+    }
 }
