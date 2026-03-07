@@ -12,8 +12,10 @@ use App\Telegram\Conversation\Event\RemoveEventConversation;
 use App\Telegram\Conversation\Student\AddStudentConversation;
 use App\Telegram\Conversation\Student\EditStudentConversation;
 use App\Telegram\Conversation\Student\RemoveStudentConversation;
+use App\Telegram\Conversation\StudentEvent\MarkParticipationConversation;
 use App\Telegram\Menu\EventsMenu;
 use App\Telegram\Menu\MainMenu;
+use App\Telegram\Menu\StudentEventsMenu;
 use App\Telegram\Menu\StudentsMenu;
 use Psr\Log\LoggerInterface;
 use SergiX44\Nutgram\Conversations\Conversation;
@@ -72,6 +74,9 @@ final class BotController extends AbstractController
         $bot->onText(MainMenu::EVENTS, function (Nutgram $bot) {
             $this->sendMenu($bot, EventsMenu::ID, '📅 Мероприятия');
         });
+        $bot->onText(MainMenu::SCORES, function (Nutgram $bot) {
+            $this->sendMenu($bot, StudentEventsMenu::ID, '✍️ Мероприятия');
+        });
 
         // ========================
         //   СТУДЕНТЫ — ДЕЙСТВИЯ
@@ -129,6 +134,16 @@ final class BotController extends AbstractController
             }
         });
 
+        // ========================
+        //   УЧАСТИЕ В МЕРОПРИЯТИЯХ
+        // ========================
+
+        $bot->onText(StudentEventsMenu::LABEL_MARK_PARTICIPATION, function (Nutgram $bot) {
+            if ($this->botService->getCurrentMenu($bot) === StudentEventsMenu::ID) {
+                MarkParticipationConversation::begin($bot);
+            }
+        });
+
         $bot->run();
 
         return $this->json([]);
@@ -148,6 +163,7 @@ final class BotController extends AbstractController
         return match ($menu) {
             StudentsMenu::ID => StudentsMenu::make(),
             EventsMenu::ID => EventsMenu::make(),
+            StudentEventsMenu::ID => StudentEventsMenu::make(),
             default => MainMenu::make(),
         };
     }

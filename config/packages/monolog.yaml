@@ -5,6 +5,7 @@ monolog:
         - webhook
         - students
         - events
+        - actions
 
     handlers:
         main:
@@ -36,7 +37,7 @@ monolog:
         app:
             type: stream
             level: info
-            channels: [students, events]
+            channels: [students, events, actions]
             path: '%kernel.logs_dir%/app.log'
             formatter: monolog.formatter.json
 
