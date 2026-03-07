@@ -69,9 +69,17 @@ class ViewParticipationConversation extends Conversation
         } else {
             $message = "📋 Участия студента: $student->name" . PHP_EOL . PHP_EOL;
             $totalScore = 0;
-            foreach ($participations as $index => $participation) {
-                $message .= ($index + 1) . ". {$participation->getEvent()->getName()}" . PHP_EOL;
-                $message .= "📅 " . $participation->getEvent()->getStartDate()->format('d.m.Y') . PHP_EOL;
+            $number = 0;
+            foreach ($participations as $participation) {
+                $event = $participation->getEvent();
+                $message .= ++$number . ". {$event->getName()}" . PHP_EOL;
+                $message .= "📅 " . $event->getStartDate()->format('d.m.Y');
+                if ($finishDate = $event->getFinishDate()) {
+                    $message .= ' - ' . $finishDate->format('d.m.Y');
+                }
+
+                $message .= PHP_EOL;
+
                 $message .= "🏆 Баллов: {$participation->getScore()}" . PHP_EOL . PHP_EOL;
                 $totalScore += $participation->getScore();
             }
