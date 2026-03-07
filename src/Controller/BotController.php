@@ -23,6 +23,7 @@ use SergiX44\Nutgram\Conversations\Conversation;
 use SergiX44\Nutgram\Nutgram;
 use SergiX44\Nutgram\Telegram\Types\Keyboard\ReplyKeyboardMarkup;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,6 +32,8 @@ use Symfony\Component\Routing\Attribute\Route;
 final class BotController extends AbstractController
 {
     public function __construct(
+        #[Autowire(param: 'kernel.debug')]
+        private readonly bool            $isDebug,
         #[Target(name: 'monolog.logger.webhook')]
         private readonly LoggerInterface $logger,
         private readonly BotService      $botService,
@@ -154,7 +157,12 @@ final class BotController extends AbstractController
         try {
             $bot->run();
         } catch (\Throwable $e) {
-            $bot->sendMessage($e::class . ' ' . $e->getMessage());
+            if ($this->isDebug) {
+                $bot->sendMessage($e::class . ' ' . $e->getMessage() . PHP_EOL . PHP_EOL . $e->getTraceAsString());
+            } else {
+                $bot->sendMessage('Что-то пошло не так. Попробуйте повторить действие позже');
+            }
+
             return $this->json([]);
         }
 
