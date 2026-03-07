@@ -13,6 +13,7 @@ use App\Telegram\Conversation\Student\AddStudentConversation;
 use App\Telegram\Conversation\Student\EditStudentConversation;
 use App\Telegram\Conversation\Student\RemoveStudentConversation;
 use App\Telegram\Conversation\StudentEvent\MarkParticipationConversation;
+use App\Telegram\Conversation\StudentEvent\ViewParticipationConversation;
 use App\Telegram\Menu\EventsMenu;
 use App\Telegram\Menu\MainMenu;
 use App\Telegram\Menu\StudentEventsMenu;
@@ -144,7 +145,18 @@ final class BotController extends AbstractController
             }
         });
 
-        $bot->run();
+        $bot->onText(StudentEventsMenu::LABEL_VIEW_PARTICIPATION, function (Nutgram $bot) {
+            if ($this->botService->getCurrentMenu($bot) === StudentEventsMenu::ID) {
+                ViewParticipationConversation::begin($bot);
+            }
+        });
+
+        try {
+            $bot->run();
+        } catch (\Throwable $e) {
+            $bot->sendMessage($e::class . ' ' . $e->getMessage());
+            return $this->json([]);
+        }
 
         return $this->json([]);
     }

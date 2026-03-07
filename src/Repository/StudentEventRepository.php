@@ -30,4 +30,19 @@ class StudentEventRepository extends ServiceEntityRepository
         $em->persist($studentEvent);
         $em->flush();
     }
+
+    /**
+     * @return array<StudentEvent>
+     */
+    public function findByStudent(int $studentId): array
+    {
+        return $this->createQueryBuilder('studentEvent')
+            ->leftJoin('studentEvent.event', 'event')
+            ->addSelect('event')
+            ->where('studentEvent.student = :studentId')
+            ->setParameter('studentId', $studentId)
+            ->orderBy('event.startDate', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }
