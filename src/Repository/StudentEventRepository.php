@@ -60,4 +60,19 @@ class StudentEventRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return array<StudentEvent>
+     */
+    public function getTopStudents(int $limit = 10): array
+    {
+        return $this->createQueryBuilder('studentEvent')
+            ->select('studentEvent', 'student', 'SUM(studentEvent.score) as total_score')
+            ->leftJoin('studentEvent.student', 'student')
+            ->groupBy('student.id')
+            ->orderBy('total_score', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }

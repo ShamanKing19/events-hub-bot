@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Student\Dto;
+namespace App\Event\Dto;
 
 use DateTime;
 

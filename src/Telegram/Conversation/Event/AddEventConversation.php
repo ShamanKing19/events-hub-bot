@@ -2,8 +2,8 @@
 
 namespace App\Telegram\Conversation\Event;
 
+use App\Event\Dto\EventDto;
 use App\Event\EventService;
-use App\Student\Dto\EventDto;
 use App\Telegram\BotService;
 use App\Telegram\Menu\MainMenu;
 use DateMalformedStringException;
@@ -25,10 +25,9 @@ class AddEventConversation extends Conversation
     private const string TEMPLATE_DATE = '01.01.2026 00:00:00';
 
     public function __construct(
-        private readonly BotService   $botService,
+        private readonly BotService $botService,
         private readonly EventService $eventService
-    ) {
-    }
+    ) {}
 
     protected function getSerializableAttributes(): array
     {

@@ -11,6 +11,7 @@ readonly class StudentEventsMenu
     public const string LABEL_MARK_PARTICIPATION = '✍️ Отметить участие';
     public const string LABEL_VIEW_PARTICIPATION = '📋 Статистика студента';
     public const string LABEL_VIEW_EVENT_PARTICIPANTS = '👥 Статистика мероприятия';
+    public const string LABEL_TOP_STUDENTS = '🏆 Топ студентов';
     public const string LABEL_BACK = '⬅️ Назад';
 
     public static function make(): ReplyKeyboardMarkup
@@ -18,6 +19,7 @@ readonly class StudentEventsMenu
         return ReplyKeyboardMarkup::make(resize_keyboard: true)
             ->addRow(KeyboardButton::make(self::LABEL_MARK_PARTICIPATION))
             ->addRow(KeyboardButton::make(self::LABEL_VIEW_PARTICIPATION), KeyboardButton::make(self::LABEL_VIEW_EVENT_PARTICIPANTS))
+            ->addRow(KeyboardButton::make(self::LABEL_TOP_STUDENTS))
             ->addRow(KeyboardButton::make(self::LABEL_BACK));
     }
 }

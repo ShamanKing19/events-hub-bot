@@ -2,9 +2,10 @@
 
 namespace App\Controller;
 
+use App\Event\Dto\EventDto;
 use App\Event\EventService;
-use App\Student\Dto\EventDto;
 use App\Student\StudentService;
+use App\StudentEvent\StudentEventService;
 use App\Telegram\BotService;
 use App\Telegram\Conversation\Event\AddEventConversation;
 use App\Telegram\Conversation\Event\EditEventConversation;
@@ -13,6 +14,7 @@ use App\Telegram\Conversation\Student\AddStudentConversation;
 use App\Telegram\Conversation\Student\EditStudentConversation;
 use App\Telegram\Conversation\Student\RemoveStudentConversation;
 use App\Telegram\Conversation\StudentEvent\MarkParticipationConversation;
+use App\Telegram\Conversation\StudentEvent\ViewEventParticipantsConversation;
 use App\Telegram\Conversation\StudentEvent\ViewParticipationConversation;
 use App\Telegram\Menu\EventsMenu;
 use App\Telegram\Menu\MainMenu;
@@ -27,19 +29,26 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class BotController extends AbstractController
 {
     public function __construct(
         #[Autowire(param: 'kernel.debug')]
-        private readonly bool            $isDebug,
+        private readonly bool $isDebug,
         #[Target(name: 'monolog.logger.webhook')]
         private readonly LoggerInterface $logger,
-        private readonly BotService      $botService,
-        private readonly StudentService  $studentService,
-        private readonly EventService    $eventService
-    ) {
+        private readonly BotService $botService,
+        private readonly StudentService $studentService,
+        private readonly EventService $eventService,
+        private readonly StudentEventService $studentEventService
+    ) {}
+
+    #[Route('/test', name: 'test')]
+    public function test(): Response
+    {
+        return new Response();
     }
 
     #[Route('/api/v1/bot/webhook', name: 'bot_webhook')]
@@ -154,6 +163,18 @@ final class BotController extends AbstractController
             }
         });
 
+        $bot->onText(StudentEventsMenu::LABEL_VIEW_EVENT_PARTICIPANTS, function (Nutgram $bot) {
+            if ($this->botService->getCurrentMenu($bot) === StudentEventsMenu::ID) {
+                ViewEventParticipantsConversation::begin($bot);
+            }
+        });
+
+        $bot->onText(StudentEventsMenu::LABEL_TOP_STUDENTS, function (Nutgram $bot) {
+            if ($this->botService->getCurrentMenu($bot) === StudentEventsMenu::ID) {
+                $this->sendTopStudents($bot);
+            }
+        });
+
         try {
             $bot->run();
         } catch (\Throwable $e) {
@@ -215,5 +236,28 @@ final class BotController extends AbstractController
             }
             $bot->sendMessage($message);
         }
+    }
+
+    private function sendTopStudents(Nutgram $bot): void
+    {
+        $topStudents = $this->studentEventService->getTopStudents(20);
+
+        if (empty($topStudents)) {
+            $bot->sendMessage('🏆 Топ студентов' . PHP_EOL . PHP_EOL . 'Нет данных об участии студентов.');
+            return;
+        }
+
+        $message = '🏆 Топ студентов по баллам' . PHP_EOL . PHP_EOL;
+        $medals = ['🥇', '🥈', '🥉'];
+        foreach ($topStudents as $index => $item) {
+            if ($medal = $medals[$index] ?? null) {
+                $message .= $medal . ' ';
+            }
+
+            $position = $index + 1;
+            $message .= " $position. {$item->student->name} — {$item->score} баллов" . PHP_EOL;
+        }
+
+        $bot->sendMessage($message);
     }
 }

@@ -3,7 +3,7 @@
 namespace App\Event;
 
 use App\Entity\Event;
-use App\Student\Dto\EventDto;
+use App\Event\Dto\EventDto;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 

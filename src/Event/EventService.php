@@ -3,7 +3,7 @@
 namespace App\Event;
 
 use App\Entity\Event;
-use App\Student\Dto\EventDto;
+use App\Event\Dto\EventDto;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 

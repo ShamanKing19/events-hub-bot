@@ -60,7 +60,7 @@ readonly class StudentService
         $this->logger->info('Студент удалён', ['id' => $id]);
     }
 
-    private static function entityToDto(Student $student): StudentDto
+    public static function entityToDto(Student $student): StudentDto
     {
         return new StudentDto(
             id: $student->getId(),
