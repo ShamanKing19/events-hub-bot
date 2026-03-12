@@ -22,9 +22,9 @@ class MarkParticipationConversation extends Conversation
     protected ?float $score = null;
 
     public function __construct(
-        private readonly BotService          $botService,
-        private readonly StudentService      $studentService,
-        private readonly EventService        $eventService,
+        private readonly BotService $botService,
+        private readonly StudentService $studentService,
+        private readonly EventService $eventService,
         private readonly StudentEventService $studentEventService,
     ) {
     }

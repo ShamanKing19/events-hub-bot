@@ -20,7 +20,7 @@ class AddStudentConversation extends Conversation
     private const string BUTTON_DECLINE = '❌ Отмена';
 
     public function __construct(
-        private readonly BotService     $botService,
+        private readonly BotService $botService,
         private readonly StudentService $studentService
     ) {
     }

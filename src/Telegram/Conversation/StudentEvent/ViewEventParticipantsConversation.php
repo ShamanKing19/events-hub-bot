@@ -17,8 +17,8 @@ class ViewEventParticipantsConversation extends Conversation
     protected ?int $eventId = null;
 
     public function __construct(
-        private readonly BotService          $botService,
-        private readonly EventService        $eventService,
+        private readonly BotService $botService,
+        private readonly EventService $eventService,
         private readonly StudentEventService $studentEventService,
     ) {
     }
