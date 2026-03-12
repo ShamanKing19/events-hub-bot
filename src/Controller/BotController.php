@@ -178,10 +178,16 @@ final class BotController extends AbstractController
         try {
             $bot->run();
         } catch (\Throwable $e) {
-            if ($this->isDebug) {
-                $bot->sendMessage($e::class . ' ' . $e->getMessage() . PHP_EOL . PHP_EOL . $e->getTraceAsString());
-            } else {
-                $bot->sendMessage('Что-то пошло не так. Попробуйте повторить действие позже');
+            if (!$this->isDebug) {
+                $bot->sendMessage('Что-то пошло не так. Попробуйте повторить действие позже.');
+                return $this->json([]);
+            }
+
+            $bot->sendMessage($e::class . ' ' . $e->getMessage());
+            foreach ($e->getTrace() as $trace) {
+                foreach (str_split(json_encode($trace) ?: 'Не удалось превратить trace в json', 4096) as $part) {
+                    $bot->sendMessage($part);
+                }
             }
 
             return $this->json([]);
