@@ -31,7 +31,7 @@ class WebhookInitCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $baseUrl = rtrim($input->getOption('url'), '/') ?: $this->baseUrl;
+        $baseUrl = rtrim($input->getOption('url') ?? '', '/') ?: $this->baseUrl;
 
         return $this->getApplication()->doRun(new ArrayInput([
             'command' => 'nutgram:hook:set',
