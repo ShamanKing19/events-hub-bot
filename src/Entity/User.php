@@ -20,6 +20,14 @@ class User
     #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
+    #[ORM\Column(nullable: true, columnDefinition: 'DATETIME DEFAULT CURRENT_TIMESTAMP')]
+    private ?\DateTimeImmutable $createdAt;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +53,18 @@ class User
     public function setUsername(string $username): static
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(?\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
