@@ -3,6 +3,7 @@
 
 # Docker
 .docker/mariadb
+.docker/nginx/certbot
 
 # Symfony
 /var
