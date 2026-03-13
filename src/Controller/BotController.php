@@ -81,7 +81,102 @@ final class BotController extends AbstractController
         }
 
         Conversation::refreshOnDeserialize();
+        $this->registerHandlers($bot);
 
+        try {
+            $bot->run();
+        } catch (\Throwable $e) {
+            if (!$this->isDebug) {
+                $bot->sendMessage('Что-то пошло не так. Попробуйте повторить действие позже.');
+                return $this->json([]);
+            }
+
+            $bot->sendMessage($e::class . ' ' . $e->getMessage());
+            foreach ($e->getTrace() as $trace) {
+                foreach (str_split(json_encode($trace) ?: 'Не удалось превратить trace в json', 4096) as $part) {
+                    $bot->sendMessage($part);
+                }
+            }
+
+            return $this->json([]);
+        }
+
+        return $this->json([]);
+    }
+
+    private function sendMenu(Nutgram $bot, string $menu, string $text): void
+    {
+        $this->botService->setCurrentMenu($bot, $menu);
+        $bot->sendMessage($text, reply_markup: $this->buildKeyboard($menu));
+    }
+
+    /**
+     * Клавиатуры
+     */
+    private function buildKeyboard(string $menu): ReplyKeyboardMarkup
+    {
+        return match ($menu) {
+            StudentsMenu::ID => StudentsMenu::make(),
+            EventsMenu::ID => EventsMenu::make(),
+            StudentEventsMenu::ID => StudentEventsMenu::make(),
+            default => MainMenu::make(),
+        };
+    }
+
+    private function sendEventList(Nutgram $bot, int $rowsPerMessage = 20): void
+    {
+        $events = $this->eventService->findForChoice();
+        $number = 1;
+
+        foreach (array_chunk($events, $rowsPerMessage) as $chunk) {
+            $message = '';
+            /** @var EventDto $event */
+            foreach ($chunk as $event) {
+                $message .= $number++ . ". $event->name (с " . $event->startDate->format('d.m.Y H:i:s') . ' по ' . $event->finishDate->format('d.m.Y H:i:s') . ')' . PHP_EOL;
+            }
+            $bot->sendMessage($message);
+        }
+    }
+
+    private function sendStudentList(Nutgram $bot, int $rowsPerMessage = 20): void
+    {
+        $students = $this->studentService->findForChoice();
+        $number = 1;
+
+        foreach (array_chunk($students, $rowsPerMessage) as $chunk) {
+            $message = '';
+            foreach ($chunk as $student) {
+                $message .= $number++ . ". $student->name" . PHP_EOL;
+            }
+            $bot->sendMessage($message);
+        }
+    }
+
+    private function sendTopStudents(Nutgram $bot): void
+    {
+        $topStudents = $this->studentEventService->getTopStudents(20);
+
+        if (empty($topStudents)) {
+            $bot->sendMessage('🏆 Топ студентов' . PHP_EOL . PHP_EOL . 'Нет данных об участии студентов.');
+            return;
+        }
+
+        $message = '🏆 Топ студентов по баллам' . PHP_EOL . PHP_EOL;
+        $medals = ['🥇', '🥈', '🥉'];
+        foreach ($topStudents as $index => $item) {
+            if ($medal = $medals[$index] ?? null) {
+                $message .= $medal . ' ';
+            }
+
+            $position = $index + 1;
+            $message .= " $position. {$item->student->name} — {$item->score} баллов" . PHP_EOL;
+        }
+
+        $bot->sendMessage($message);
+    }
+
+    private function registerHandlers(Nutgram $bot): void
+    {
         // ========================
         //         КОМАНДЫ
         // ========================
@@ -199,97 +294,6 @@ final class BotController extends AbstractController
                 $this->sendTopStudents($bot);
             }
         });
-
-        try {
-            $bot->run();
-        } catch (\Throwable $e) {
-            if (!$this->isDebug) {
-                $bot->sendMessage('Что-то пошло не так. Попробуйте повторить действие позже.');
-                return $this->json([]);
-            }
-
-            $bot->sendMessage($e::class . ' ' . $e->getMessage());
-            foreach ($e->getTrace() as $trace) {
-                foreach (str_split(json_encode($trace) ?: 'Не удалось превратить trace в json', 4096) as $part) {
-                    $bot->sendMessage($part);
-                }
-            }
-
-            return $this->json([]);
-        }
-
-        return $this->json([]);
-    }
-
-    private function sendMenu(Nutgram $bot, string $menu, string $text): void
-    {
-        $this->botService->setCurrentMenu($bot, $menu);
-        $bot->sendMessage($text, reply_markup: $this->buildKeyboard($menu));
-    }
-
-    /**
-     * Клавиатуры
-     */
-    private function buildKeyboard(string $menu): ReplyKeyboardMarkup
-    {
-        return match ($menu) {
-            StudentsMenu::ID => StudentsMenu::make(),
-            EventsMenu::ID => EventsMenu::make(),
-            StudentEventsMenu::ID => StudentEventsMenu::make(),
-            default => MainMenu::make(),
-        };
-    }
-
-    private function sendEventList(Nutgram $bot, int $rowsPerMessage = 20): void
-    {
-        $events = $this->eventService->findForChoice();
-        $number = 1;
-
-        foreach (array_chunk($events, $rowsPerMessage) as $chunk) {
-            $message = '';
-            /** @var EventDto $event */
-            foreach ($chunk as $event) {
-                $message .= $number++ . ". $event->name (с " . $event->startDate->format('d.m.Y H:i:s') . ' по ' . $event->finishDate->format('d.m.Y H:i:s') . ')' . PHP_EOL;
-            }
-            $bot->sendMessage($message);
-        }
-    }
-
-    private function sendStudentList(Nutgram $bot, int $rowsPerMessage = 20): void
-    {
-        $students = $this->studentService->findForChoice();
-        $number = 1;
-
-        foreach (array_chunk($students, $rowsPerMessage) as $chunk) {
-            $message = '';
-            foreach ($chunk as $student) {
-                $message .= $number++ . ". $student->name" . PHP_EOL;
-            }
-            $bot->sendMessage($message);
-        }
-    }
-
-    private function sendTopStudents(Nutgram $bot): void
-    {
-        $topStudents = $this->studentEventService->getTopStudents(20);
-
-        if (empty($topStudents)) {
-            $bot->sendMessage('🏆 Топ студентов' . PHP_EOL . PHP_EOL . 'Нет данных об участии студентов.');
-            return;
-        }
-
-        $message = '🏆 Топ студентов по баллам' . PHP_EOL . PHP_EOL;
-        $medals = ['🥇', '🥈', '🥉'];
-        foreach ($topStudents as $index => $item) {
-            if ($medal = $medals[$index] ?? null) {
-                $message .= $medal . ' ';
-            }
-
-            $position = $index + 1;
-            $message .= " $position. {$item->student->name} — {$item->score} баллов" . PHP_EOL;
-        }
-
-        $bot->sendMessage($message);
     }
 
     private function findChatId(array $webhook): ?int
