@@ -6,6 +6,6 @@ final readonly class CreateUserDto
 {
     public function __construct(
         public int $chatId,
-        public string $username
+        public ?string $username = null
     ) {}
 }

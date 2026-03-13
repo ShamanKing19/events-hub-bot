@@ -17,7 +17,7 @@ class User
     #[ORM\Column(unique: true)]
     private ?int $chatId = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $username = null;
 
     #[ORM\Column(nullable: true, columnDefinition: 'DATETIME DEFAULT CURRENT_TIMESTAMP')]

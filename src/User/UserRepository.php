@@ -27,11 +27,15 @@ class UserRepository extends ServiceEntityRepository
             throw new UserAlreadyExistsException($dto);
         }
 
-        if ($this->findByUsername($dto->username)) {
+        if ($dto->username && $this->findByUsername($dto->username)) {
             throw new UserAlreadyExistsException($dto);
         }
 
-        $user = new User()->setChatId($dto->chatId)->setUsername($dto->username);
+        $user = new User()->setChatId($dto->chatId);
+        if ($dto->username) {
+            $user->setUsername($dto->username);
+        }
+
         $this->getEntityManager()->persist($user);
 
         return $user;

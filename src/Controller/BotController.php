@@ -73,7 +73,7 @@ final class BotController extends AbstractController
 
             try {
                 // Первого пользователя регистрируем автоматически
-                $this->userService->create(new CreateUserDto(chatId: $chatId, username: $this->findUsername($webhook) ?? 'ПУСТО'));
+                $this->userService->create(new CreateUserDto(chatId: $chatId, username: $this->findUsername($webhook)));
             } catch (UserAlreadyExistsException $e) {
                 $this->logger->error($e->getMessage(), $webhook);
                 return $this->json(null);
