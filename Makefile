@@ -1,9 +1,6 @@
 build:
 	docker compose build
 
-up:
-	docker compose up -d
-
 down:
 	docker compose down
 
@@ -12,6 +9,9 @@ restart:
 
 exec:
 	docker exec -it events-hub-bot-php-1 bash
+
+dev:
+	docker compose up -d
 
 prod:
 	docker compose -f docker-compose.prod.yml up -d
