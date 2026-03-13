@@ -19,6 +19,12 @@ readonly class UserService
         return $this->findByChatId($chatId) !== null;
     }
 
+    public function remove(int $chatId): void
+    {
+        $this->userRepository->remove($chatId);
+        $this->entityManager->flush();
+    }
+
     /**
      * @throws UserAlreadyExistsException
      */
@@ -28,6 +34,11 @@ readonly class UserService
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    public function exists(int $chatId): bool
+    {
+        return $this->findByChatId($chatId) !== null;
     }
 
     public function findByChatId(int $chatId): ?User

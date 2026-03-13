@@ -18,6 +18,13 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function remove(int $chatId): void
+    {
+        if ($user = $this->findByChatId($chatId)) {
+            $this->getEntityManager()->remove($user);
+        }
+    }
+
     /**
      * @throws UserAlreadyExistsException
      */

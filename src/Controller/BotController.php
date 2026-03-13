@@ -294,6 +294,32 @@ final class BotController extends AbstractController
                 $this->sendTopStudents($bot);
             }
         });
+
+        $bot->onMessage(function (Nutgram $bot) {
+            $message = $bot->message();
+
+            // Добавление/удаление пользователя
+            if ($message->isForwarded()) {
+                $sender = $message->forward_origin->toArray()['sender_user'] ?? null;
+                if (!$sender) {
+                    return;
+                }
+
+                $chatId = (int)$sender['id'];
+                if ($this->userService->exists($chatId)) {
+                    $this->userService->remove($chatId);
+                    $bot->sendMessage('Данный пользователь больше не сможет пользоваться ботом ⛔');
+                    return;
+                }
+
+
+                $this->userService->create(new CreateUserDto(
+                    chatId: $chatId,
+                    username: $sender['username'] ?? null
+                ));
+                $bot->sendMessage('Пользователю предоставлен доступ ✅');
+            }
+        });
     }
 
     private function findChatId(array $webhook): ?int
