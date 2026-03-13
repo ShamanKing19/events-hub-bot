@@ -16,7 +16,11 @@ readonly class UserService
 
     public function canUseBot(int $chatId): bool
     {
-        return $this->findByChatId($chatId) !== null;
+        if ($this->findByChatId($chatId) !== null) {
+            return true;
+        }
+
+        return !$this->userRepository->doesAnyUserExists();
     }
 
     /**
@@ -33,10 +37,5 @@ readonly class UserService
     public function findByChatId(int $chatId): ?User
     {
         return $this->userRepository->findByChatId($chatId);
-    }
-
-    public function doesAnyUserExists(): bool
-    {
-        return $this->userRepository->doesAnyUserExists();
     }
 }
