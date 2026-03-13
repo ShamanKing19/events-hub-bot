@@ -1,7 +1,8 @@
 <?php
 
-namespace App\User;
+namespace App\Entity;
 
+use App\User\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Table(name: 'users')]

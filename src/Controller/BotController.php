@@ -20,6 +20,9 @@ use App\Telegram\Menu\EventsMenu;
 use App\Telegram\Menu\MainMenu;
 use App\Telegram\Menu\StudentEventsMenu;
 use App\Telegram\Menu\StudentsMenu;
+use App\User\Dto\CreateUserDto;
+use App\User\Exception\UserAlreadyExistsException;
+use App\User\UserService;
 use Psr\Log\LoggerInterface;
 use SergiX44\Nutgram\Conversations\Conversation;
 use SergiX44\Nutgram\Nutgram;
@@ -42,7 +45,8 @@ final class BotController extends AbstractController
         private readonly BotService $botService,
         private readonly StudentService $studentService,
         private readonly EventService $eventService,
-        private readonly StudentEventService $studentEventService
+        private readonly StudentEventService $studentEventService,
+        private readonly UserService $userService
     ) {}
 
     #[Route('/test', name: 'test')]
@@ -54,7 +58,28 @@ final class BotController extends AbstractController
     #[Route('/api/v1/bot/webhook', name: 'bot_webhook')]
     public function webhook(Nutgram $bot, Request $request): JsonResponse
     {
-        $this->logger->info('webhook', $request->toArray());
+        $webhook = $request->toArray();
+        $this->logger->info('webhook', $webhook);
+        $chatId = $this->findChatId($webhook);
+        if ($chatId === null) {
+            return $this->json(null);
+        }
+
+        // Первого пользователя регистрируем автоматически
+        if (!$this->userService->doesAnyUserExists()) {
+            try {
+                $this->userService->create(new CreateUserDto(chatId: $chatId, username: $this->findUsername($webhook) ?? 'ПУСТО'));
+            } catch (UserAlreadyExistsException $e) {
+                $this->logger->error($e->getMessage(), $webhook);
+                return $this->json(null);
+            }
+        }
+
+        if (!$this->userService->canUseBot($chatId)) {
+            $this->logger->notice('Неавторизованный пользователь', $webhook);
+            return $this->json(null);
+        }
+
         Conversation::refreshOnDeserialize();
 
         // ========================
@@ -265,5 +290,31 @@ final class BotController extends AbstractController
         }
 
         $bot->sendMessage($message);
+    }
+
+    private function findChatId(array $webhook): ?int
+    {
+        if (isset($webhook['message'])) {
+            return isset($webhook['message']['from']['id']) ? (int)$webhook['message']['from']['id'] : null;
+        }
+
+        if (isset($webhook['callback_query'])) {
+            return isset($webhook['callback_query']['from']['id']) ? (int)$webhook['callback_query']['from']['id'] : null;
+        }
+
+        return null;
+    }
+
+    private function findUsername(array $webhook): ?string
+    {
+        if (isset($webhook['message'])) {
+            return $webhook['message']['from']['username'] ?? null;
+        }
+
+        if (isset($webhook['callback_query'])) {
+            return $webhook['callback_query']['from']['username'] ?? null;
+        }
+
+        return null;
     }
 }
