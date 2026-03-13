@@ -2,7 +2,7 @@
 
 namespace App\Entity;
 
-use App\Repository\StudentEventRepository;
+use App\StudentEvent\StudentEventRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StudentEventRepository::class)]

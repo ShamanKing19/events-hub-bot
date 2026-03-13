@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace App\StudentEvent;
 
 use App\Entity\Event;
 use App\Entity\Student;

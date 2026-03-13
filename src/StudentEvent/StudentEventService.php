@@ -3,7 +3,6 @@
 namespace App\StudentEvent;
 
 use App\Entity\StudentEvent;
-use App\Repository\StudentEventRepository;
 use App\Student\StudentService;
 use App\StudentEvent\Dto\StudentEventDto;
 use App\StudentEvent\Dto\StudentScoreDto;
