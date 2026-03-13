@@ -1,17 +1,20 @@
+build:
+	docker compose build
+
 up:
 	docker compose up -d
 
 down:
 	docker compose down
 
-build:
-	docker compose build
-
 restart:
 	docker compose restart
 
 exec:
-	docker compose up -d && docker exec -it events-hub-bot-php-1 bash
+	docker exec -it events-hub-bot-php-1 bash
+
+prod:
+	docker compose -f docker-compose.prod.yml up -d
 
 ngrok:
 	ngrok http 80
